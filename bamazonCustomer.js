@@ -46,6 +46,54 @@ function createDB() {
   });
 }
 
+function showMenu() {
+  connection.query("SELECT * FROM products", function (err, resp) {
+    if (err) throw err;
+    var choices = resp.map(el => el.product_name);
+    choices.push("=====Exit=====");
+    inquirer.prompt([
+      {
+        type: "list",
+        message: "Welcome to SR Depo! What would you like to buy?",
+        name: "pickedItem",
+        choices: choices
+      }
+    ]).then(response1 => {
+      if (response1.pickedItem === "=====Exit=====") {
+        promptCB("Thanks for coming!", function () {
+          process.exit();
+        });
+      }
+      inquirer.prompt([
+        {
+          type: "input",
+          message: "How many would you like to buy?",
+          name: "pickedQuantity",
+          validate: function (answer) {
+            if (!answer || isNaN(answer) || Math.abs(parseInt(answer) < 1)) {
+              promptCB("You need to type a valid integer!".yellow, function () { });
+              return false;
+            }
+            else return true;
+          }
+        }
+      ]).then(function (response) {
+        var theItem = resp.find(el => el.product_name === response1.pickedItem);
+        if (Math.abs(parseInt(response.pickedQuantity) < 1))
+          return promptCB("You need to specify an amount to buy!".yellow, showMenu);
+        else if (parseInt(response.pickedQuantity) > theItem.stock_quantity)
+          return promptCB("Can't buy more than what you see!".red, showMenu);
+        else {
+          connection.query("UPDATE products SET stock_quantity = ? WHERE item_id = ?", [theItem.stock_quantity - response.pickedQuantity, theItem.item_id], function (err) {
+            if (err) throw err;
+            displayTable(function () { promptCB("Congrats, your trade was successful!".green, showMenu); });
+          });
+        }
+      });
+    });
+  });
+}
+
 function displayTable(cb) {
   console.clear();
   connection.query("SELECT * FROM products", function (err, resp) {
