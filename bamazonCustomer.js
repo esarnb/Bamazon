@@ -16,7 +16,7 @@ connection.connect(function (err) {
   if (err) throw err;
 
   //Running createProductDatabase.js functions to setup the db and tables
-  createDB(connection, function(){
+  createDB(connection, function () {
     displayTable(connection, showMenu)
   });
 });
@@ -55,7 +55,7 @@ function showMenu() {
       ]).then(function (response) {
         var theItem = resp.find(el => el.item_id == response1.pickedItem);
         console.log(`theItem = ${theItem}`);
-        
+
         if (Math.abs(parseInt(response.pickedQuantity) < 1))
           return promptCB("You need to specify an amount to buy!".yellow, showMenu);
         else if (parseInt(response.pickedQuantity) > theItem.stock_quantity)
@@ -71,7 +71,7 @@ function showMenu() {
   });
 }
 
-
 function promptCB(prompt, cb) {
+  console.clear()
   console.log("\n", prompt); cb();
 }
