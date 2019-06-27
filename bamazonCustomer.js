@@ -49,12 +49,14 @@ function createDB() {
 function showMenu() {
   connection.query("SELECT * FROM products", function (err, resp) {
     if (err) throw err;
-    var choices = resp.map(el => el.product_name);
+    var choices = resp.map(el => el.item_id.toString());
+    console.log(`choices = ${choices}`);
+
     choices.push("=====Exit=====");
     inquirer.prompt([
       {
         type: "list",
-        message: "Welcome to SR Depo! What would you like to buy?",
+        message: "Welcome to SR Depo! Select an ID to buy an item",
         name: "pickedItem",
         choices: choices
       }
@@ -78,7 +80,9 @@ function showMenu() {
           }
         }
       ]).then(function (response) {
-        var theItem = resp.find(el => el.product_name === response1.pickedItem);
+        var theItem = resp.find(el => el.item_id == response1.pickedItem);
+        console.log(`theItem = ${theItem}`);
+        
         if (Math.abs(parseInt(response.pickedQuantity) < 1))
           return promptCB("You need to specify an amount to buy!".yellow, showMenu);
         else if (parseInt(response.pickedQuantity) > theItem.stock_quantity)
