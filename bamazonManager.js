@@ -27,7 +27,7 @@ function managerMenu() {
       type: "list",
       name: "action",
       message: "What would you like to do?",
-      choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product", "=====Exit====="]
+      choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product", "Quit"]
     }
   ]).then((answer) => {
     switch (answer.action) {
@@ -40,7 +40,7 @@ function managerMenu() {
         break;
       case "Add New Product": addNewProduct()
         break;
-      case "=====Exit=====": promptCB("Thanks for stopping by manager!".cyan, function () { connection.end() })
+      case "Quit": promptCB("Thanks for stopping by manager!".cyan, function () { connection.end() })
         break;
 
     }
@@ -72,12 +72,40 @@ function viewLowInventory() {
   })
 }
 
-function addToInventory(cb) {
+function addToInventory() {
   console.clear();
+  connection.query("SELECT * FROM products", function (err, resp) {
+    var choices = resp.map(el => el.item_id.toString());
+    displayTable(connection, function () {
+      inquirer.prompt([
+        {
+          type: "input",
+          name: "itemID",
+          message: "Input an [ID] item to add quantity to [Enter 'q' to Quit]: ",
+          choices: choices
+        }
+      ]).then((response1) => {
+        var theItem = resp.find(el => el.item_id == response1.itemID);
+        if (theItem.itemID === "q") {return promptCB("Thanks for stopping by, Manager!"), function(){connection.end()}}
+        else {
+          inquirer.prompt([
+            {
+              type: "input",
+              name: "itemQuantity",
+              message: "How many would you like to add? [Enter 'q' to Quit] ",
+            }
+          ]).then((response2) => {
+            // var theQuantity = resp.find(el => el.stock_quantity == response2.itemQuantity);
+            if (theItem.itemID === "q") {return promptCB("Thanks for stopping by, Manager!"), function(){connection.end()}}
+            else {
+              connection.query("UPDATE products SET stock_quantity = ? WHERE item_id = ?", [theItem.stock_quantity + parseInt(response2.itemQuantity), theItem.item_id], function(err) { if (err) throw err; promptCB("Updated Product!".green, function(){displayTable(connection, managerMenu)}) })
+            }
+          })
+        }
+      })
+    })
 
-  //
-
-  cb()
+  })
 }
 
 function addNewProduct(cb) {
@@ -89,6 +117,5 @@ function addNewProduct(cb) {
 }
 
 function promptCB(prompt, cb) {
-  console.clear()
   console.log("\n", prompt); cb();
 }  

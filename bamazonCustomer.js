@@ -16,7 +16,7 @@ connection.connect(function (err) {
   if (err) throw err;
 
   //Running createProductDatabase.js functions to setup the db and tables
-  createDB(connection, function () {
+  createDB(connection, function(){
     displayTable(connection, showMenu)
   });
 });
@@ -25,16 +25,15 @@ function showMenu() {
   connection.query("SELECT * FROM products", function (err, resp) {
     if (err) throw err;
     var choices = resp.map(el => el.item_id.toString());
-    choices.push("=====Exit=====");
+    choices.push("q");
     inquirer.prompt([
       {
-        type: "list",
-        message: "Welcome to SR Depo! Select an ID to buy an item",
-        name: "pickedItem",
-        choices: choices
-      }
+        type: "input",
+        message: "Welcome to SR Depo! Input an ID to buy an item [Enter 'q' to quit]: ",
+        name: "pickedItem"
+      },
     ]).then(response1 => {
-      if (response1.pickedItem === "=====Exit=====") {
+      if (response1.pickedItem === "q") {
         promptCB("Thanks for coming!", function () {
           process.exit();
         });
@@ -53,9 +52,7 @@ function showMenu() {
           }
         }
       ]).then(function (response) {
-        var theItem = resp.find(el => el.item_id == response1.pickedItem);
-        console.log(`theItem = ${theItem}`);
-
+        var theItem = resp.find(el => el.item_id == parseInt(response1.pickedItem));
         if (Math.abs(parseInt(response.pickedQuantity) < 1))
           return promptCB("You need to specify an amount to buy!".yellow, showMenu);
         else if (parseInt(response.pickedQuantity) > theItem.stock_quantity)
@@ -72,6 +69,5 @@ function showMenu() {
 }
 
 function promptCB(prompt, cb) {
-  console.clear()
   console.log("\n", prompt); cb();
 }
