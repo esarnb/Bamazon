@@ -14,7 +14,7 @@ As a customer, you may choose any item you'd like and specify the amount of that
 
 ## Getting Started
 
-     Please be aware, once you reach the MySQL step, all you need to do is install and start MySQL. The file toolset.js already handles the creation for the database and table for usage. The database is called "bamazon" and the table is called "products". If you need to change them, you may in the respective file under the function "createDB".
+#### Please be aware, once you reach the MySQL step, all you need to do is install and start MySQL. The file toolset.js already handles the creation for the database and table for usage. The database is called "bamazon" and the table is called "products". If you need to change them, you may in the respective file under the function "createDB".
 
 You will need all of the files in the repository, except for the git folder and readme file. Make sure the rest of the files are in one, singular project folder when downloading them.
 
