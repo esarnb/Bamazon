@@ -49,6 +49,7 @@ If you would like to change the table structure, you may look into toolset.js to
 
 * [Inquirer](https://www.npmjs.com/package/inquirer): Package that creates a clean UI for Q&A on the terminal.
 * [Colors](https://www.npmjs.com/package/colors): Package to add color to the prompts in the terminal.
+* [CLI-Table-2](https://www.npmjs.com/package/cli-table2): Package to display a formatted table to the terminal.
 
 ## Authors
 
