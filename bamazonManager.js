@@ -130,7 +130,7 @@ function addToInventory() {
             validate: function(answer) {
               //If the letter is q for quit, quit.
               if (answer === "q") return promptCB("Thanks for stopping by, Manager!", process.exit);
-              else if (isNaN(answer) || !isInteger(parseInt(answer)) || parseInt(answer) < 1) {
+              else if (isNaN(answer) || !Number.isInteger(parseInt(answer)) || parseInt(answer) < 1) {
                 console.log("\nYou need to type a valid amount greater than 0!\n".yellow)
                 return false;
               }
