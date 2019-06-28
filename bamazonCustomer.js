@@ -8,12 +8,14 @@ var createDB = require("./toolset").createDB;
 var displayTable = require("./toolset").displayTable;
 var promptCB = require("./toolset").promptCB;
 
+var config = require("./config.json");
+
 //Connect to mysql
 var connection = mysql.createConnection({
-  host: "localhost",
-  port: 3306,
-  user: "root",
-  password: "password"
+  host: config.mysql.host,
+  port: config.mysql.port,
+  user: config.mysql.user,
+  password: config.mysql.password
 });
 
 //Establish the connection
